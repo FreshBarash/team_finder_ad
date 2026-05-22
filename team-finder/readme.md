@@ -108,6 +108,11 @@ docker compose down
 ```bash
 python manage.py migrate   
 ```   
+Создание демо-пользователей "пустышек":
+
+```bash
+python manage.py seed_demo   
+```
 
 После заполнения `.env` и настройки базы данных можно запустить сервер разработки:
 
@@ -148,11 +153,12 @@ python manage.py runserver
 
 ```bash
 python3 -m venv venv
-source venv/bin/activate        # Windows: venv\Scripts\activate
+source venv/bin/activate       
 pip install -r requirements.txt
-cp .env_example .env            # при необходимости поправьте параметры БД
-docker compose up -d            # поднимет PostgreSQL на порту 5432
+cp .env_example .env            
+docker compose up -d            
 python manage.py migrate
+python manage.py seed_demo
 python manage.py runserver
 ```
 
