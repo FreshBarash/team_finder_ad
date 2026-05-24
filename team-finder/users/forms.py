@@ -1,7 +1,9 @@
 import re
+
 from urllib.parse import urlparse
 from django import forms
 from django.contrib.auth.forms import PasswordChangeForm
+
 from .models import User
 
 PHONE_RE = re.compile(r"^(?:8|\+7)\d{10}$")
