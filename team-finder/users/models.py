@@ -7,7 +7,7 @@ from django.db import models
 from PIL import Image, ImageDraw, ImageFont
 
 from .managers import UserManager
-from .utils import generate_avatar
+from .utils import AVATAR_FONT_SIZE, generate_avatar
 
 AVATAR_COLOR_GREY_BLUE = "#4F6D7A"
 AVATAR_COLOR_GREY = "#6C7A89"
