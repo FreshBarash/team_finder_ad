@@ -3,6 +3,7 @@ from urllib.parse import urlparse
 from django import forms 
 
 PHONE_RE = re.compile(r"^(?:8|\+7)\d{10}$")
+AVATAR_FONT_SIZE = 130
 
 def normalize_phone(phone): 
     """Приводит 8XXXXXXXXXX и +7XXXXXXXXXX к единому виду +7XXXXXXXXXX.""" 
@@ -50,7 +51,7 @@ def generate_avatar(user):
             / "Neue_Haas_Grotesk_Display_Pro_75_Bold.otf"
         )
         try:
-            font = ImageFont.truetype(str(font_path), 130)
+            font = ImageFont.truetype(str(font_path), AVATAR_FONT_SIZE)
         except OSError:
             font = ImageFont.load_default()
 
