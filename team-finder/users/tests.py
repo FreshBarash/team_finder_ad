@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 from projects.models import Project, Skill
+
 from .models import User
 
 
