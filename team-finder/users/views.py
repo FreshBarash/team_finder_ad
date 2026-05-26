@@ -1,4 +1,6 @@
 import json
+
+from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
@@ -8,7 +10,7 @@ from django.views.decorators.http import require_POST
 
 from projects.models import Skill
 
-from .forms import ChangePasswordForm, LoginForm, ProfileEditForm, RegisterForm
+from .forms import LoginForm, ProfileEditForm, RegisterForm
 from .models import User
 
 PER_PAGE = 12
@@ -120,13 +122,13 @@ def edit_profile(request):
 @login_required
 def change_password(request):
     if request.method == "POST":
-        form = ChangePasswordForm(request.user, request.POST)
+        form = PasswordChangeForm(request.user, request.POST)
         if form.is_valid():
             user = form.save()
             update_session_auth_hash(request, user)
             return redirect("users:detail", pk=request.user.pk)
     else:
-        form = ChangePasswordForm(request.user)
+        form = PasswordChangeForm(request.user)
     return render(request, "users/change_password.html", {"form": form})
 
 
