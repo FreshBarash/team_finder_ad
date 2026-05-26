@@ -46,8 +46,3 @@ class ProfileEditForm(forms.ModelForm):
 
     def clean_github_url(self):
         return validate_github(self.cleaned_data.get("github_url", ""))
-
-
-class ChangePasswordForm(PasswordChangeForm):
-    """old_password, new_password1, new_password2 — как ожидает шаблон."""
-    pass
