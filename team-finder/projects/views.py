@@ -12,6 +12,7 @@ from .forms import ProjectForm
 from .models import Project, Skill
 
 PER_PAGE = 12
+SKILL_FILTER_NUMBER = 10
 
 
 def _parse_body(request):
@@ -162,7 +163,7 @@ def complete_project(request, pk):
 
 def skill_autocomplete(request):
     autoskill = request.GET.get("q", "")
-    skills = Skill.objects.filter(name__istartswith=q).order_by("name")[:10]
+    skills = Skill.objects.filter(name__istartswith=q).order_by("name")[:SKILL_FILTER_NUMBER]
     return JsonResponse(list(skills.values("id", "name")), safe=False)
 
 
