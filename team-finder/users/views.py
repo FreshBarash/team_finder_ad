@@ -133,7 +133,7 @@ def change_password(request):
 
 
 def skill_autocomplete(request):
-    q = request.GET.get("q", "")
+    autoskill = request.GET.get("q", "")
     skills = Skill.objects.filter(name__istartswith=q).order_by("name")[:10]
     return JsonResponse(list(skills.values("id", "name")), safe=False)
 
