@@ -68,6 +68,6 @@ def generate_avatar(user):
         filename = f"avatar_{uuid.uuid4()}.png"
         user.avatar.save(filename, ContentFile(buffer.getvalue()), save=False)
 
-def paginate(request, queryset, per_page):
-    paginator = Paginator(queryset, per_page)
+def paginate(request, queryset):
+    paginator = Paginator(queryset, PER_PAGE)
     return paginator.get_page(request.GET.get("page"))
