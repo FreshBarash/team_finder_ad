@@ -10,7 +10,7 @@ from django.views.decorators.http import require_POST
 
 from .forms import ProjectForm
 from .models import Project, Skill
-from users.utils import paginate
+from ..users.utils import paginate
 
 PER_PAGE = 12
 SKILL_FILTER_NUMBER = 10
