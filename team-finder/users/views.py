@@ -14,6 +14,7 @@ from projects.models import Skill
 
 from .forms import LoginForm, ProfileEditForm, RegisterForm
 from .models import User
+from .utils import paginate
 
 PER_PAGE = 12
 
@@ -54,8 +55,7 @@ def user_list(request):
     if active_skill:
         participants = participants.filter(skills__name=active_skill).distinct()
 
-    paginator = Paginator(participants, PER_PAGE)
-    page_obj = paginator.get_page(request.GET.get("page"))
+    page_obj = paginate(request, participants)
 
     return render(
         request,
