@@ -93,8 +93,19 @@ def edit_project(request, pk):
 @login_required
 @require_POST
 def toggle_favorite(request, pk):
-    project = get_object_or_404(Project, pk=pk)
-    if project in request.user.favorites.all():
+   
+    project = Project.objects.filter(pk=pk).first()
+
+    if project is None:
+        return JsonResponse(
+            {
+                "status": "error",
+                "message": "Project not found",
+            },
+            status=HTTPStatus.NOT_FOUND,
+        )
+    
+    if request.user.favorites.filter(pk=project.pk).exists():
         request.user.favorites.remove(project)
         favorited = False
     else:
@@ -106,8 +117,19 @@ def toggle_favorite(request, pk):
 @login_required
 @require_POST
 def toggle_participate(request, pk):
-    project = get_object_or_404(Project, pk=pk)
-    if request.user in project.participants.all():
+    
+    project = Project.objects.filter(pk=pk).first()
+
+    if project is None:
+        return JsonResponse(
+            {
+                "status": "error",
+                "message": "Project not found",
+            },
+            status=HTTPStatus.NOT_FOUND,
+        ))
+    
+    if project.participants.filter(pk=request.user.pk).exists():
         project.participants.remove(request.user)
         participant = False
     else:
@@ -119,7 +141,18 @@ def toggle_participate(request, pk):
 @login_required
 @require_POST
 def complete_project(request, pk):
-    project = get_object_or_404(Project, pk=pk)
+    
+    project = Project.objects.filter(pk=pk).first()
+
+    if project is None:
+        return JsonResponse(
+            {
+                "status": "error",
+                "message": "Project not found",
+            },
+            status=HTTPStatus.NOT_FOUND,
+        )
+    
     if project.owner_id != request.user.id or project.status != "open":
         return JsonResponse({"status": "error"}, status=HTTPStatus.FORBIDDEN)
     project.status = "closed"
@@ -136,7 +169,18 @@ def skill_autocomplete(request):
 @login_required
 @require_POST
 def add_skill(request, pk):
-    project = get_object_or_404(Project, pk=pk)
+    
+    project = Project.objects.filter(pk=pk).first()
+
+    if project is None:
+        return JsonResponse(
+            {
+                "status": "error",
+                "message": "Project not found",
+            },
+            status=HTTPStatus.NOT_FOUND,
+        )
+    
     if project.owner_id != request.user.id:
         return JsonResponse({"status": "error"}, status=HTTPStatus.FORBIDDEN)
 
@@ -146,7 +190,18 @@ def add_skill(request, pk):
 
     created = False
     if skill_id:
-        skill = get_object_or_404(Skill, pk=skill_id)
+        
+        skill = Skill.objects.filter(pk=skill_id).first()
+
+        if skill is None:
+            return JsonResponse(
+                {
+                    "status": "error",
+                    "message": "Skill not found",
+                },
+                status=HTTPStatus.NOT_FOUND,
+            )
+        
     elif name:
         skill, created = Skill.objects.get_or_create(name=name)
     else:
@@ -171,10 +226,32 @@ def add_skill(request, pk):
 @login_required
 @require_POST
 def remove_skill(request, pk, skill_id):
-    project = get_object_or_404(Project, pk=pk)
+    
+    project = Project.objects.filter(pk=pk).first()
+
+    if project is None:
+        return JsonResponse(
+            {
+                "status": "error",
+                "message": "Project not found",
+            },
+            status=HTTPStatus.NOT_FOUND,
+        )
+    
     if project.owner_id != request.user.id:
         return JsonResponse({"status": "error"}, status=HTTPStatus.FORBIDDEN)
-    skill = get_object_or_404(Skill, pk=skill_id)
+    
+    skill = Skill.objects.filter(pk=skill_id).first()
+
+    if skill is None:
+        return JsonResponse(
+            {
+                "status": "error",
+                "message": "Skill not found",
+            },
+            status=HTTPStatus.NOT_FOUND,
+        )
+    
     if not project.skills.filter(pk=skill.pk).exists():
         return JsonResponse({"status": "error"}, status=HTTPStatus.NOT_FOUND)
     project.skills.remove(skill)
