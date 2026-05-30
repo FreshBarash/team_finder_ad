@@ -108,10 +108,11 @@ def toggle_favorite(request, pk):
     
     if request.user.favorites.filter(pk=project.pk).exists():
         request.user.favorites.remove(project)
-        favorited = False
     else:
         request.user.favorites.add(project)
-        favorited = True
+        
+    favorited = request.user.favorites.filter(pk=project.pk).exists()
+    
     return JsonResponse({"status": "ok", "favorited": favorited})
 
 
@@ -132,10 +133,11 @@ def toggle_participate(request, pk):
     
     if project.participants.filter(pk=request.user.pk).exists():
         project.participants.remove(request.user)
-        participant = False
     else:
         project.participants.add(request.user)
-        participant = True
+
+    participant = project.participants.filter(pk=request.user.pk).exists():
+    
     return JsonResponse({"status": "ok", "participant": participant})
 
 
