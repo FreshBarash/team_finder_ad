@@ -15,19 +15,20 @@ from .models import User
 
 PER_PAGE = 12
 
+OWNERS_OF_FAVOURITE_PROJECTS = lambda u: User.objects.filter(
+    owned_projects__in=u.favorites.all()
+OWNERS_OF_PARTICIPATING_PROJECTS = lambda u: User.objects.filter(
+    owned_projects__participants=u
+INTERESTED_IN_MY_PROJECTS = lambda u: User.objects.filter(
+    favorites__owner=u
+PARTICIPANTS_OF_MY_PROJECTS = lambda u: User.objects.filter(
+    participated_projects__owner=u
+
 FILTERS = {
-    "owners-of-favorite-projects": lambda u: User.objects.filter(
-        owned_projects__in=u.favorites.all()
-    ),
-    "owners-of-participating-projects": lambda u: User.objects.filter(
-        owned_projects__participants=u
-    ),
-    "interested-in-my-projects": lambda u: User.objects.filter(
-        favorites__owner=u
-    ),
-    "participants-of-my-projects": lambda u: User.objects.filter(
-        participated_projects__owner=u
-    ),
+    "owners-of-favorite-projects": OWNERS_OF_FAVOURITE_PROJECTS,
+    "owners-of-participating-projects": OWNERS_OF_PARTICIPATING_PROJECTS,
+    "interested-in-my-projects": INTERESTED_IN_MY_PROJECTS,
+    "participants-of-my-projects": PARTICIPANTS_OF_MY_PROJECTS,
 }
 
 
