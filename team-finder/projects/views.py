@@ -33,8 +33,7 @@ def project_list(request):
     if active_skill:
         projects = projects.filter(skills__name=active_skill).distinct()
 
-    paginator = Paginator(projects, PER_PAGE)
-    page_obj = paginator.get_page(request.GET.get("page"))
+page_obj = paginate(request, projects)
 
     all_skills = Skill.objects.values_list("name", flat=True)
 
