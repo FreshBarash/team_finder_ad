@@ -4,6 +4,8 @@ from urllib.parse import urlparse
 from django import forms 
 from django.core.paginator import Paginator
 
+from .models import AVATAR_COLORS
+
 PHONE_RE = re.compile(r"^(?:8|\+7)\d{10}$")
 AVATAR_FONT_SIZE = 130
 PER_PAGE = 12
