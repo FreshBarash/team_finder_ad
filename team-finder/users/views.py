@@ -153,7 +153,18 @@ def add_skill(request, pk):
 
     created = False
     if skill_id:
-        skill = get_object_or_404(Skill, pk=skill_id)
+        
+        skill = Skill.objects.filter(pk=skill_id).first()
+
+        if skill is None:
+            return JsonResponse(
+                {
+                    "status": "error",
+                    "message": "Skill not found",
+                },
+                status=HTTPStatus.NOT_FOUND,
+            )
+        
     elif name:
         skill, created = Skill.objects.get_or_create(name=name)
     else:
@@ -180,7 +191,18 @@ def add_skill(request, pk):
 def remove_skill(request, pk, skill_id):
     if request.user.id != pk:
         return JsonResponse({"status": "error"}, status=HTTPStatus.FORBIDDEN)
-    skill = get_object_or_404(Skill, pk=skill_id)
+    
+     skill = Skill.objects.filter(pk=skill_id).first()
+
+    if skill is None:
+        return JsonResponse(
+            {
+                "status": "error",
+                "message": "Skill not found",
+            },
+            status=HTTPStatus.NOT_FOUND,
+        )
+    
     if not request.user.skills.filter(pk=skill.pk).exists():
         return JsonResponse({"status": "error"}, status=HTTPStatus.NOT_FOUND)
     request.user.skills.remove(skill)
