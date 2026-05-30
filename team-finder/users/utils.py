@@ -1,9 +1,12 @@
 import re 
+
 from urllib.parse import urlparse 
 from django import forms 
+from django.core.paginator import Paginator
 
 PHONE_RE = re.compile(r"^(?:8|\+7)\d{10}$")
 AVATAR_FONT_SIZE = 130
+PER_PAGE = 12
 
 def normalize_phone(phone): 
     """Приводит 8XXXXXXXXXX и +7XXXXXXXXXX к единому виду +7XXXXXXXXXX.""" 
@@ -64,3 +67,7 @@ def generate_avatar(user):
         image.save(buffer, format="PNG")
         filename = f"avatar_{uuid.uuid4()}.png"
         user.avatar.save(filename, ContentFile(buffer.getvalue()), save=False)
+
+def paginate(request, queryset, per_page):
+    paginator = Paginator(queryset, per_page)
+    return paginator.get_page(request.GET.get("page"))
