@@ -1,5 +1,7 @@
 import json
 
+from http import HTTPStatus
+
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
@@ -143,7 +145,7 @@ def skill_autocomplete(request):
 @require_POST
 def add_skill(request, pk):
     if request.user.id != pk:
-        return JsonResponse({"status": "error"}, status=403)
+        return JsonResponse({"status": "error"}, status=HTTPStatus.FORBIDDEN)
 
     data = _parse_body(request)
     skill_id = data.get("skill_id")
@@ -155,7 +157,7 @@ def add_skill(request, pk):
     elif name:
         skill, created = Skill.objects.get_or_create(name=name)
     else:
-        return JsonResponse({"status": "error"}, status=400)
+        return JsonResponse({"status": "error"}, status=HTTPStatus.BAD_REQUEST)
 
     added = False
     if not request.user.skills.filter(pk=skill.pk).exists():
@@ -177,9 +179,9 @@ def add_skill(request, pk):
 @require_POST
 def remove_skill(request, pk, skill_id):
     if request.user.id != pk:
-        return JsonResponse({"status": "error"}, status=403)
+        return JsonResponse({"status": "error"}, status=HTTPStatus.FORBIDDEN)
     skill = get_object_or_404(Skill, pk=skill_id)
     if not request.user.skills.filter(pk=skill.pk).exists():
-        return JsonResponse({"status": "error"}, status=404)
+        return JsonResponse({"status": "error"}, status=HTTPStatus.NOT_FOUND)
     request.user.skills.remove(skill)
     return JsonResponse({"status": "ok"})
