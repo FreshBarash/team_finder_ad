@@ -73,3 +73,13 @@ def generate_avatar(user):
 def paginate(request, queryset):
     paginator = Paginator(queryset, PER_PAGE)
     return paginator.get_page(request.GET.get("page"))
+
+def validate_github(url):
+    if not url:
+        return url
+    host = (urlparse(url).netloc or "").lower()
+    if host.startswith("www."):
+        host = host[4:]
+    if host != "github.com":
+        raise forms.ValidationError("Ссылка должна вести на github.com")
+    return url
