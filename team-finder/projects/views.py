@@ -1,5 +1,7 @@
 import json
 
+from http import HTTPStatus
+
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.http import JsonResponse
@@ -119,14 +121,14 @@ def toggle_participate(request, pk):
 def complete_project(request, pk):
     project = get_object_or_404(Project, pk=pk)
     if project.owner_id != request.user.id or project.status != "open":
-        return JsonResponse({"status": "error"}, status=403)
+        return JsonResponse({"status": "error"}, status=HTTPStatus.FORBIDDEN)
     project.status = "closed"
     project.save(update_fields=["status"])
     return JsonResponse({"status": "ok", "project_status": "closed"})
 
 
 def skill_autocomplete(request):
-    q = request.GET.get("q", "")
+    autoskill = request.GET.get("q", "")
     skills = Skill.objects.filter(name__istartswith=q).order_by("name")[:10]
     return JsonResponse(list(skills.values("id", "name")), safe=False)
 
@@ -136,7 +138,7 @@ def skill_autocomplete(request):
 def add_skill(request, pk):
     project = get_object_or_404(Project, pk=pk)
     if project.owner_id != request.user.id:
-        return JsonResponse({"status": "error"}, status=403)
+        return JsonResponse({"status": "error"}, status=HTTPStatus.FORBIDDEN)
 
     data = _parse_body(request)
     skill_id = data.get("skill_id")
@@ -148,7 +150,7 @@ def add_skill(request, pk):
     elif name:
         skill, created = Skill.objects.get_or_create(name=name)
     else:
-        return JsonResponse({"status": "error"}, status=400)
+        return JsonResponse({"status": "error"}, status=HTTPStatus.BAD_REQUEST)
 
     added = False
     if not project.skills.filter(pk=skill.pk).exists():
@@ -171,9 +173,9 @@ def add_skill(request, pk):
 def remove_skill(request, pk, skill_id):
     project = get_object_or_404(Project, pk=pk)
     if project.owner_id != request.user.id:
-        return JsonResponse({"status": "error"}, status=403)
+        return JsonResponse({"status": "error"}, status=HTTPStatus.FORBIDDEN)
     skill = get_object_or_404(Skill, pk=skill_id)
     if not project.skills.filter(pk=skill.pk).exists():
-        return JsonResponse({"status": "error"}, status=404)
+        return JsonResponse({"status": "error"}, status=HTTPStatus.NOT_FOUND)
     project.skills.remove(skill)
     return JsonResponse({"status": "ok"})
